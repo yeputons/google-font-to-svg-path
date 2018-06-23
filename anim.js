@@ -53,7 +53,7 @@ function animateAnagram(textBefore, textAfter, svgBefore, svgAfter, svgCurrentHo
     const mid1x = ox / 2 - dx, mid1y = oy / 2 - dy;
     const mid2x = ox / 2 + dx, mid2y = oy / 2 + dy;
 
-    maxYOff = Math.max(maxYOff, Math.abs(dy) / 3);
+    maxYOff = Math.max(maxYOff, Math.abs(dy));
 
     el.setAttribute('path',
       'M 0 0 ' +
