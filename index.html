@@ -9,9 +9,11 @@
 
   <link rel="stylesheet" type="text/css" href="index.css" />
 
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://maker.js.org/target/js/browser.maker.js" type="text/javascript"></script>
   <script src="https://pomax.github.io/bezierjs/bezier.js" type="text/javascript"></script>
   <script src="opentype.js" type="text/javascript"></script>
+  <script src="anim.js" type="text/javascript"></script>
   <script src="index.js" type="text/javascript"></script>
 
 </head>
@@ -28,17 +30,23 @@
 
 <label>variant: <select id="font-variant"></select></label>
 
-<label>text: <input type="text" id="input-text" value="Verb" /></label>
+<label>text1: <input type="text" id="input-text1" value="ЛОСК" /></label>
+
+<label>text2: <input type="text" id="input-text2" value="СКОЛ" /></label>
 
 <label>size: <input type="number" id="input-size" value="100" /></label>
 
 <label>union: <input type="checkbox" id="input-union" /></label>
 
-<label>separate characters: <input type="checkbox" id="input-separate" /></label>
-
 <label>bezier accuracy <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span> : <input type="text" id="input-bezier-accuracy" placeholder="auto" /></label>
 
-<div id="svg-render"></div>
+<input type="button" id="input-update" value="update"/>
+
+<div id="svg-render1"></div>
+
+<div id="svg-render2"></div>
+
+<div id="svg-render-anim"></div>
 
 <textarea id="output-svg"></textarea>
 

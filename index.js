@@ -8,7 +8,8 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput1.value, size, _this.unionCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, function(svg) { _this.updateSvg1(svg); });
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput2.value, size, _this.unionCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, function(svg) { _this.updateSvg2(svg); });
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -21,16 +22,19 @@ var App = /** @class */ (function () {
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
-        this.separateCheckbox = this.$('#input-separate');
-        this.textInput = this.$('#input-text');
+        this.textInput1 = this.$('#input-text1');
+        this.textInput2 = this.$('#input-text2');
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
         this.sizeInput = this.$('#input-size');
-        this.renderDiv = this.$('#svg-render');
+        this.renderDiv1 = this.$('#svg-render1');
+        this.renderDiv2 = this.$('#svg-render2');
+        this.renderDivAnim = this.$('#svg-render-anim');
         this.outputTextarea = this.$('#output-svg');
+        this.updateButton = this.$('#input-update');
     };
     App.prototype.handleEvents = function () {
         this.selectFamily.onchange = this.loadVariants;
-        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.separateCheckbox.onchange = this.bezierAccuracy.onchange = this.renderCurrent;
+        this.updateButton.onclick = this.renderCurrent;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -38,6 +42,9 @@ var App = /** @class */ (function () {
     App.prototype.addOption = function (select, optionText) {
         var option = document.createElement('option');
         option.text = optionText;
+        if (optionText == "Noto Serif") {
+            option.selected = true;
+        }
         select.options.add(option);
     };
     App.prototype.getGoogleFonts = function (apiKey) {
@@ -52,23 +59,33 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, separate, bezierAccuracy) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, bezierAccuracy, cb) {
+        text = text.toUpperCase();
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v].substring(5); //remove http:
+        var url = f.files[v];
         opentype.load(url, function (err, font) {
             //generate the text using a font
             var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy);
-            if (separate) {
-                for (var i in textModel.models) {
-                    textModel.models[i].layer = i;
-                }
+            for (var i in textModel.models) {
+                textModel.models[i].layer = i;
             }
             var svg = makerjs.exporter.toSVG(textModel);
-            _this.renderDiv.innerHTML = svg;
-            _this.outputTextarea.value = svg;
+            cb(svg);
         });
+    };
+    App.prototype.updateSvg1 = function (svg) {
+        this.renderDiv1.innerHTML = svg;
+        this.updateAnimation();
+    };
+    App.prototype.updateSvg2 = function (svg) {
+        this.renderDiv2.innerHTML = svg;
+        this.updateAnimation();
+    };
+    App.prototype.updateAnimation = function () {
+        animateAnagram(this.textInput1.value.toUpperCase(), this.textInput2.value.toUpperCase(), this.renderDiv1.children[0], this.renderDiv2.children[0], this.renderDivAnim);
+        this.outputTextarea.value = this.renderDivAnim.innerHTML;
     };
     return App;
 }());
